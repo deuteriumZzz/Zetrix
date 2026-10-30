@@ -35,7 +35,22 @@ python3.11 -m venv .venv-mvp
 `workspace_test` использует временную SQLite и быстрый тестовый password hasher.
 **Не запускать сервер для пользователей с этими настройками.** Команда тестов
 не применяет миграции к существующей базе проекта. SQLite не проверяет поведение
-блокировок PostgreSQL; проверка гонок на PostgreSQL остаётся этапом перед пилотом.
+блокировок PostgreSQL, поэтому те же тесты и тесты гонок запускаются отдельно.
+
+### Проверка на PostgreSQL
+
+Нужен любой PostgreSQL 14+ и роль с правом CREATEDB; раннер создаёт и удаляет
+собственную базу `test_<имя>`, рабочие данные не затрагиваются. Пример с Docker:
+
+```sh
+docker run --rm -d --name zetrix-pg -e POSTGRES_PASSWORD=pg -p 55432:5432 postgres:16
+ZETRIX_PG_HOST=127.0.0.1 ZETRIX_PG_PORT=55432 ZETRIX_PG_PASSWORD=pg \
+  .venv-mvp/bin/python -m django test apps.workspaces apps.scenario_engine apps.evidence apps.decisions --settings=config.settings.workspace_pg_test
+docker stop zetrix-pg
+```
+
+`HOST` может быть каталогом unix-сокета. Остальные переменные:
+`ZETRIX_PG_USER` (по умолчанию `postgres`) и `ZETRIX_PG_NAME`.
 
 ## Профиль MVP
 
@@ -202,22 +217,40 @@ JSON export содержит тот же объект результата в о
 
 ## Фактические проверки
 
-- В текущей локальной итерации прошли 55 backend unit/integration-тестов на
-  временной SQLite, включая полный session/CSRF-путь.
+- 30 октября 2026: 66 backend unit/integration-тестов проходят на временной
+  SQLite и на PostgreSQL 16.2, включая полный session/CSRF-путь. Ранее
+  документированная команда находила 55: файл портфеля назывался
+  `portfolio_tests.py` и не попадал под шаблон `test*.py` (11 тестов).
+- 8 тестов гонок (`test_concurrency.py`) проходят на PostgreSQL 16.2 10 раз
+  подряд; на SQLite пропускаются. Покрыты: номера версий сценария и события,
+  один Idempotency-Key для run и решения, один ключ для двух версий,
+  параллельное подтверждение одного CSV-импорта, взаимное отключение двух
+  owner и публикация/отзыв события одновременно с созданием версии сценария.
+  Контроль: если отключить все `select_for_update`, падают 7–8 из 8 тестов
+  (последний тест вероятностный и в одном из трёх прогонов не падал).
 - Покрытие `apps.workspaces`, `apps.evidence`, `apps.decisions` и
-  `apps.scenario_engine` вместе — 95% с ветвлениями (1077 statements,
-  182 branches); тестовые файлы, миграции и management-команды исключены.
-  Покрытие всего репозитория не измерено.
+  `apps.scenario_engine` вместе — 98% с ветвлениями (1056 statements,
+  180 branches, прогон на SQLite, 66 тестов); тестовые файлы, миграции и
+  management-команды исключены. Покрытие всего репозитория не измерено.
 - `makemigrations workspaces evidence decisions --check --dry-run`: нет
   незаписанных изменений модели.
+- Профиль MVP на PostgreSQL 16.2: `check`, `migrate --plan`, `migrate` с нуля и
+  повторный `migrate` (без изменений) выполнены; `check --deploy` предупреждает
+  только о `SECURE_HSTS_INCLUDE_SUBDOMAINS` и `SECURE_HSTS_PRELOAD`
+  (осознанно отложены). В БД есть шесть unique-ограничений как запасная
+  защита; триггеров нет, неизменяемость истории держится на приложении.
 - Профиль MVP загружается; legacy API, admin и media не маршрутизируются.
 - Локально пройдены браузерные пути вход → организация → проект → портфель →
   сценарий → run → refresh и источник → публикация → выбор → run.
-- PostgreSQL/Redis integration, гонки между процессами и production rollout ещё не проверены.
+- Не проверены: Redis (throttle), несколько процессов gunicorn, PgBouncer,
+  образ `postgis/postgis` из docker-compose, нагрузка и production rollout.
+  `lock_timeout`/`statement_timeout` не заданы: зависшая транзакция держит
+  блокировку организации, пока gunicorn не завершит worker. Тесты v2 не входят
+  в CI (`.github/workflows/ci.yml` запускает только прежний pytest).
 
 ## Следующий этап
 
-Локальный React `/app` подключён. Перед пилотом нужны отдельная PostgreSQL БД,
-проверка конкурентных записей, Redis и reverse proxy, разрешённая реальная
+Локальный React `/app` подключён. Перед пилотом нужны таймауты PostgreSQL,
+проверка Redis и нескольких workers, reverse proxy, разрешённая реальная
 выборка источников, процедуры доступа и восстановления. Публичный лендинг
 по-прежнему использует локальный калькулятор и не отправляет его вводные в API.
