@@ -1,0 +1,70 @@
+# Legacy application production overrides; this is not the isolated v2 MVP
+# deployment profile. Use with:
+# Requires Docker Compose 2.24.4+ for !override merge semantics.
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Differences from the dev compose file:
+#   - production.txt requirements (no dev/test tooling), no live source bind-mount
+#   - gunicorn without --reload
+#   - Postgres/Redis/Airflow ports not published to the host; web binds only
+#     to loopback for a reverse proxy running on the same host
+#   - restart: unless-stopped everywhere so the stack survives a host reboot
+
+services:
+  db:
+    ports: !override []
+    restart: unless-stopped
+
+  redis:
+    ports: !override []
+    restart: unless-stopped
+
+  web:
+    build:
+      args:
+        REQUIREMENTS_FILE: production.txt
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    ports: !override
+      - "127.0.0.1:8000:8000"
+    volumes: !override
+      - media_files:/app/media
+      - static_files:/app/staticfiles
+    restart: unless-stopped
+
+  celery_worker:
+    build:
+      args:
+        REQUIREMENTS_FILE: production.txt
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    volumes: !override
+      - media_files:/app/media
+    restart: unless-stopped
+
+  celery_beat:
+    build:
+      args:
+        REQUIREMENTS_FILE: production.txt
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    volumes: !override []
+    restart: unless-stopped
+
+  bot:
+    build:
+      args:
+        REQUIREMENTS_FILE: production.txt
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+    volumes: !override []
+
+  airflow-webserver:
+    ports: !override []
+
+volumes:
+  static_files:
