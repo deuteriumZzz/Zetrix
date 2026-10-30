@@ -1,0 +1,29 @@
+import { useState, type FormEvent } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { api, orgPath } from './api'
+import { canWrite, dateLabel, initialInputs } from './domain'
+import type { Organization, Project, Scenario } from './types'
+import { Empty, ErrorNotice, Field, Heading, Loading, RefreshError, useResource } from './ui'
+import { ScenarioContextFields, contextPayload, emptyContextSelection, InputFields } from './scenario'
+
+export function Projects({ org }: { org: Organization }) {
+  const [refresh, setRefresh] = useState(0), state = useResource<Project[]>(`${orgPath(org.id)}projects/`, true, refresh)
+  const [pending, setPending] = useState(false), [error, setError] = useState<unknown>(), navigate = useNavigate()
+  async function create(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setPending(true); setError(undefined)
+    try { const project = await api.post<Project>(`${orgPath(org.id)}projects/`, { title: String(new FormData(event.currentTarget).get('title')).trim(), currency: 'USD' }); navigate(`/org/${org.id}/projects/${project.id}`) } catch (failure) { setError(failure) } finally { setPending(false) }
+  }
+  return <><Heading eyebrow="01 / PROJECTS" title="От вопроса — к сценарию." >Соберите вводные, рассчитайте последствия и сохраните основания для решения.</Heading><div className="section-title"><h2>Проекты <span>{state.data?.length ?? '—'}</span></h2><span className="pill">{org.name}</span></div>{state.loading ? <Loading/> : state.error ? <RefreshError error={state.error} retry={() => setRefresh(x => x + 1)}/> : state.data?.length ? <div className="project-grid">{state.data.map((project, index) => <Link className="project-card panel" to={`/org/${org.id}/projects/${project.id}`} key={project.id}><div className="project-card-top"><span className="eyebrow">PROJECT / {String(index + 1).padStart(2, '0')}</span><span>↗</span></div><h3>{project.title}</h3><p>Сценарии и история версий</p><div className="project-card-foot"><span>USD</span><time dateTime={project.created_at}>{dateLabel(project.created_at)}</time></div></Link>)}</div> : <Empty title="Начните с первого проекта">Например, оцените изменение стоимости закупок на следующий квартал.</Empty>}{canWrite(org.role) && <form className="panel inline-form" onSubmit={create}><Field label="Название нового проекта"><input name="title" placeholder="Закупки · следующий квартал" required maxLength={160}/></Field><button className="primary" disabled={pending}>{pending ? 'Создание…' : 'Создать проект ↗'}</button><ErrorNotice error={error}/></form>}<div className="disclosure"><span>i</span><p>Модель считает прямое изменение затрат по вашим параметрам. Вероятности событий, вторичные эффекты и валютные изменения в расчёт не входят.</p></div></>
+}
+export function ProjectPage({ org }: { org: Organization }) {
+  const { projectId = '' } = useParams(), path = `${orgPath(org.id)}projects/${projectId}/`
+  const [refresh, setRefresh] = useState(0), project = useResource<Project>(path, false, refresh), scenarios = useResource<Scenario[]>(`${path}scenarios/`, true, refresh)
+  const [inputs, setInputs] = useState(initialInputs), [selection, setSelection] = useState(emptyContextSelection), [pending, setPending] = useState(false), [error, setError] = useState<unknown>(), navigate = useNavigate()
+  async function create(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setPending(true); setError(undefined)
+    try { const scenario = await api.post<Scenario>(`${path}scenarios/`, { title: String(new FormData(event.currentTarget).get('title')).trim(), inputs, ...contextPayload(selection) }); navigate(`/org/${org.id}/projects/${projectId}/scenarios/${scenario.id}`) } catch (failure) { setError(failure) } finally { setPending(false) }
+  }
+  if (project.loading) return <Loading/>
+  if (project.error || !project.data) return <RefreshError error={project.error} retry={() => setRefresh(x => x + 1)}/>
+  return <><Link className="back-link" to={`/org/${org.id}`}>← Все проекты</Link><Heading eyebrow="PROJECT / USD" title={project.data.title}>Создайте сценарий, задайте допущения и запустите воспроизводимый расчёт.</Heading><div className="action-row"><Link className="secondary" to={`/org/${org.id}/projects/${projectId}/portfolio`}>Портфель закупок ↗</Link></div><div className="section-title"><h2>Сценарии</h2><span className="pill">{scenarios.data?.length ?? '—'} сохранено</span></div>{scenarios.loading ? <Loading/> : scenarios.error ? <RefreshError error={scenarios.error} retry={() => setRefresh(x => x + 1)}/> : scenarios.data?.length ? <div className="record-list">{scenarios.data.map(scenario => <Link className="record-row" key={scenario.id} to={`/org/${org.id}/projects/${projectId}/scenarios/${scenario.id}`}><div><h3>{scenario.title}</h3><small>{dateLabel(scenario.created_at)}</small></div><span>Открыть →</span></Link>)}</div> : <Empty title="У проекта пока нет сценариев">Первый сценарий станет отправной точкой для сравнения альтернатив.</Empty>}{canWrite(org.role) && <form className="panel editor" onSubmit={create}><div className="section-title"><h2>Новый сценарий</h2><span className="eyebrow">01 → 02 → 03</span></div><Field label="Название сценария"><input name="title" required maxLength={160} placeholder="Удорожание импорта на 20%"/></Field><ScenarioContextFields org={org} projectId={projectId} selection={selection} onChange={setSelection} onMonthlyCost={cost => setInputs(current => ({ ...current, monthly_cost: cost }))} disabled={pending}/><InputFields inputs={inputs} onChange={setInputs} monthlyCostLocked={!!selection.portfolioRevisionId}/><p className="muted">Начальные значения иллюстративные. Замените их данными своей команды.</p><ErrorNotice error={error}/><button className="primary" disabled={pending}>{pending ? 'Сохранение…' : 'Сохранить сценарий ↗'}</button></form>}</>
+}

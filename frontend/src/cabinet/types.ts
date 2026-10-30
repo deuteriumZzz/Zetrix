@@ -1,0 +1,14 @@
+export type Role = 'owner' | 'admin' | 'analyst' | 'viewer'
+export type User = { id: number; username: string; is_staff?: boolean }
+export type RecordBase = { id: string; created_at: string }
+export type Organization = RecordBase & { name: string; role?: Role }
+export type Project = RecordBase & { organization_id: string; title: string; currency: 'USD' }
+export type Inputs = { kind: 'trade' | 'supply' | 'energy'; monthly_cost: string; exposure: string; shock: string; months: number; currency: 'USD' }
+export type Revision = RecordBase & { scenario_id: string; number: number; inputs: Inputs }
+export type Scenario = RecordBase & { project_id: string; title: string; revisions?: Revision[] }
+export type RunLine = { id: string; supplier: string; country_code: string; category: string; monthly_cost: string; currency: 'USD' }
+export type LineImpact = { line_id: string; affected: boolean; baseline_total: string; additional_total: string; scenario_total: string }
+export type RunContext = { portfolio_revision_id?: string; portfolio_number?: number; monthly_total?: string; affected_line_ids?: string[]; lines?: RunLine[]; evidence?: { revision_id: string; title: string; summary: string; publication_status: string; provenance?: string; sources?: { publisher: string; url: string; allowed_use: string }[] } }
+export type Run = RecordBase & { project_id?: string; context?: RunContext; revision_id: string; status: string; inputs: Inputs; results: { baseline_total: string; scenario_total: string; additional_total: string; additional_monthly: string; exposed_monthly: string; increase_percent: string; currency: string; line_impacts?: LineImpact[] }; engine_version: string; assumptions: string[] }
+export type Decision = RecordBase & { project_id: string; title: string; note: string; run_ids: string[]; snapshots: Run[] }
+export type Member = RecordBase & { username: string; role: Role; active: boolean }
