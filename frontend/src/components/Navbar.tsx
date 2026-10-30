@@ -1,49 +1,59 @@
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/auth'
 
-const links = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/reports', label: 'Reports' },
-  { to: '/subscriptions', label: 'Alerts' },
-]
-
 export default function Navbar() {
-  const navigate = useNavigate()
+  const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
-  const clearTokens = useAuthStore((s) => s.clearTokens)
+  const navigate = useNavigate()
+  const token = useAuthStore((state) => state.accessToken)
+  const clearTokens = useAuthStore((state) => state.clearTokens)
+  const sectionHref = (section: string) => location.pathname === '/' ? `#${section}` : `/#${section}`
 
   function logout() {
     clearTokens()
     navigate('/login')
+    setMenuOpen(false)
+  }
+
+  function closeMenu() {
+    setMenuOpen(false)
   }
 
   return (
-    <nav className="bg-surface border-b border-slate-700 px-6 py-3 flex items-center justify-between">
-      <Link to="/" className="text-xl font-bold text-brand-light tracking-tight">
-        Zetrix
-        <span className="ml-2 text-xs text-slate-400 font-normal">Global Opportunity Explorer</span>
+    <header className="zh-site-header">
+      <Link to="/" className="zh-wordmark" aria-label="Zetrix home" onClick={closeMenu}>
+        <span className="zh-mark" aria-hidden="true" />
+        <span className="zh-wordmark-text">ZETRIX</span>
       </Link>
-      <div className="flex items-center gap-6">
-        {links.map((l) => (
-          <Link
-            key={l.to}
-            to={l.to}
-            className={`text-sm transition-colors ${
-              location.pathname === l.to
-                ? 'text-white font-semibold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            {l.label}
-          </Link>
-        ))}
+      <nav className={`zh-header-nav ${menuOpen ? 'is-open' : ''}`} aria-label="Main navigation">
+        <a href={sectionHref('about')} onClick={closeMenu}>About</a>
+        <a href={sectionHref('technology')} onClick={closeMenu}>Technology</a>
+        <a href={sectionHref('use-cases')} onClick={closeMenu}>Use cases</a>
+        <a href={sectionHref('regions')} onClick={closeMenu}>Regions</a>
+      </nav>
+      <div className="zh-header-actions">
+        {token ? (
+          <>
+            <Link to="/reports">Reports</Link>
+            <button className="zh-logout-link" type="button" onClick={logout}>Log out</button>
+          </>
+        ) : (
+          <>
+            <Link to="/login">Sign in</Link>
+            <Link to="/register" className="zh-access-link">Early access <span aria-hidden="true">↗</span></Link>
+          </>
+        )}
         <button
-          onClick={logout}
-          className="text-sm text-slate-400 hover:text-red-400 transition-colors ml-2"
+          className="zh-menu-toggle"
+          type="button"
+          aria-expanded={menuOpen}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMenuOpen((open) => !open)}
         >
-          Logout
+          {menuOpen ? 'Close' : 'Menu'}
         </button>
       </div>
-    </nav>
+    </header>
   )
 }

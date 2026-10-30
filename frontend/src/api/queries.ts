@@ -3,6 +3,34 @@ import api from './client'
 export const login = (username: string, password: string) =>
   api.post('/auth/token/', { username, password }).then((r) => r.data)
 
+export const register = (username: string, email: string, password: string) =>
+  api.post('/users/register/', { username, email, password }).then((r) => r.data)
+
+export const requestPasswordReset = (email: string) =>
+  api.post('/users/password-reset/', { email }).then((r) => r.data)
+
+export const confirmPasswordReset = (uid: string, token: string, newPassword: string) =>
+  api
+    .post('/users/password-reset/confirm/', { uid, token, new_password: newPassword })
+    .then((r) => r.data)
+
+export interface UserProfile {
+  id: string
+  username: string
+  email: string
+  telegram_chat_id: string | null
+  telegram_username: string
+  preferred_country: string | null
+  preferred_region: string | null
+  preferred_market_type: string
+}
+
+export const getProfile = () =>
+  api.get('/users/me/').then((r) => r.data as UserProfile)
+
+export const updateProfile = (data: Partial<UserProfile>) =>
+  api.patch('/users/me/', data).then((r) => r.data as UserProfile)
+
 export const getAggregates = () =>
   api.get('/prices/aggregates/', {
     params: { market_type: 'rental', ordering: '-date', page_size: 100 },
@@ -23,6 +51,9 @@ export const getSources = () =>
 
 export const getReports = () =>
   api.get('/reports/').then((r) => r.data.results as Report[])
+
+export const retryReport = (id: string) =>
+  api.post(`/reports/${id}/retry/`).then((r) => r.data)
 
 export const createReport = (countryId: string, regionId: string | null, label: string) => {
   const today = new Date()
@@ -97,6 +128,25 @@ export interface BusinessClimateProfile {
   last_reviewed_at: string | null
 }
 
+export interface Plan {
+  id: string
+  name: string
+  slug: string
+  price_usd_monthly: string
+  max_active_alerts: number
+  max_reports_per_month: number
+  business_climate_access: boolean
+}
+
+export const getPlans = () =>
+  api.get('/billing/plans/').then((r) => r.data as Plan[])
+
+export const getMyPlan = () =>
+  api.get('/billing/me/').then((r) => r.data as { plan: Plan; subscription: unknown | null })
+
+export const createCheckoutSession = (planId: string) =>
+  api.post('/billing/checkout/', { plan_id: planId }).then((r) => r.data as { checkout_url: string })
+
 export interface Report {
   id: string
   title: string
@@ -115,7 +165,10 @@ export interface Report {
 export interface Subscription {
   id: string
   country: string
+  country_name: string
+  country_flag: string
   region: string | null
+  region_name: string | null
   market_type: string
   threshold_pct: string
   direction: string

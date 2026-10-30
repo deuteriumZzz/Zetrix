@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { login } from "../api/queries"
 import { useAuthStore } from "../store/auth"
@@ -23,7 +23,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white">Zetrix</h1>
-          <p className="text-slate-400 mt-1">Bali Market Analyzer</p>
+          <p className="text-slate-400 mt-1">Global Opportunity Explorer</p>
         </div>
         <div className="bg-surface border border-slate-700 rounded-2xl p-8">
           <h2 className="text-xl font-semibold mb-6">Sign in</h2>
@@ -60,6 +60,9 @@ export default function Login() {
                 className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-brand-light"
                 required
               />
+              <Link to="/forgot-password" className="text-xs text-slate-500 hover:text-slate-300 mt-1.5 inline-block">
+                Forgot password?
+              </Link>
             </div>
             <button
               type="submit"
@@ -69,6 +72,12 @@ export default function Login() {
               {mutation.isPending ? "Signing in..." : "Sign in"}
             </button>
           </form>
+          <p className="text-center text-sm text-slate-400 mt-6">
+            New to Zetrix?{" "}
+            <Link to="/register" className="text-brand-light hover:underline">
+              Create an account
+            </Link>
+          </p>
         </div>
       </div>
     </div>

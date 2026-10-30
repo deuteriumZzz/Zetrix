@@ -8,6 +8,6 @@ interface GeoViewState {
 }
 
 export const useGeoViewStore = create<GeoViewState>((set) => ({
-  activeLayer: 'housing',
+  activeLayer: 'business',
   setLayer: (activeLayer) => set({ activeLayer }),
 }))

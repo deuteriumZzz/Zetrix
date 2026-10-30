@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getReports, createReport } from "../api/queries"
+import { getReports, createReport, retryReport } from "../api/queries"
 import CountryPicker from "../components/CountryPicker"
 import type { GeoCountry } from "../api/geo"
 
@@ -23,6 +23,11 @@ export default function Reports() {
 
   const createMut = useMutation({
     mutationFn: () => createReport(country!.id, null, country!.properties.name),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["reports"] }),
+  })
+
+  const retryMut = useMutation({
+    mutationFn: (id: string) => retryReport(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["reports"] }),
   })
 
@@ -77,6 +82,15 @@ export default function Reports() {
                   >
                     Download
                   </a>
+                )}
+                {(r.status === "pending" || r.status === "failed") && (
+                  <button
+                    onClick={() => retryMut.mutate(r.id)}
+                    disabled={retryMut.isPending}
+                    className="text-sm text-slate-400 hover:text-white transition-colors font-semibold disabled:opacity-50"
+                  >
+                    Retry
+                  </button>
                 )}
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getSubscriptions, createSubscription, deleteSubscription } from "../api/queries"
-import { getCountries, type GeoCountry } from "../api/geo"
+import type { GeoCountry } from "../api/geo"
 import CountryPicker from "../components/CountryPicker"
 
 export default function Subscriptions() {
@@ -12,9 +12,6 @@ export default function Subscriptions() {
     queryKey: ["subscriptions"],
     queryFn: getSubscriptions,
   })
-  const { data: countries = [] } = useQuery({ queryKey: ["countries"], queryFn: getCountries })
-  const countryById: Record<string, GeoCountry> = {}
-  for (const c of countries) countryById[c.id] = c
 
   const createMut = useMutation({
     mutationFn: () => createSubscription(country!.id, null),
@@ -58,7 +55,6 @@ export default function Subscriptions() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {activeSubs.map((sub) => {
-            const c = countryById[sub.country]
             return (
               <div
                 key={sub.id}
@@ -66,7 +62,7 @@ export default function Subscriptions() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <p className="font-semibold text-slate-200">
-                    {c ? `${c.properties.flag_emoji} ${c.properties.name}` : sub.country}
+                    {sub.country_flag} {sub.region_name ?? sub.country_name}
                   </p>
                   <span className="text-xs text-emerald-400 bg-emerald-900/30 border border-emerald-700 px-2 py-0.5 rounded-full">
                     Active

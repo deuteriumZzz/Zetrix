@@ -12,12 +12,14 @@ import PriceChart from "../components/PriceChart"
 import BusinessScorecard from "../components/BusinessScorecard"
 import StatCard from "../components/StatCard"
 import { useGeoViewStore } from "../store/geoView"
+import { useAuthStore } from "../store/auth"
 
 export default function CountryDetail() {
   const { iso2 = "", regionId } = useParams<{ iso2: string; regionId?: string }>()
   const navigate = useNavigate()
   const qc = useQueryClient()
   const activeLayer = useGeoViewStore((s) => s.activeLayer)
+  const token = useAuthStore((s) => s.accessToken)
 
   const { data: country } = useQuery({
     queryKey: ["country", iso2],
@@ -42,6 +44,7 @@ export default function CountryDetail() {
   const { data: subs = [] } = useQuery({
     queryKey: ["subscriptions"],
     queryFn: getSubscriptions,
+    enabled: !!token,
   })
 
   const activeSub = subs.find(
@@ -84,17 +87,26 @@ export default function CountryDetail() {
           </div>
         </div>
         {activeLayer === "housing" && country && (
-          <button
-            onClick={() => (activeSub ? unsubMut.mutate() : subscribeMut.mutate())}
-            disabled={subscribeMut.isPending || unsubMut.isPending}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-              activeSub
-                ? "bg-slate-700 hover:bg-red-900/50 text-slate-300 hover:text-red-300"
-                : "bg-brand hover:bg-brand-light text-white"
-            }`}
-          >
-            {activeSub ? "Unsubscribe" : "Subscribe to Alerts"}
-          </button>
+          token ? (
+            <button
+              onClick={() => (activeSub ? unsubMut.mutate() : subscribeMut.mutate())}
+              disabled={subscribeMut.isPending || unsubMut.isPending}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                activeSub
+                  ? "bg-slate-700 hover:bg-red-900/50 text-slate-300 hover:text-red-300"
+                  : "bg-brand hover:bg-brand-light text-white"
+              }`}
+            >
+              {activeSub ? "Unsubscribe" : "Subscribe to Alerts"}
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-700 hover:bg-slate-600 text-slate-200 transition-all"
+            >
+              Sign in for Alerts
+            </button>
+          )
         )}
       </div>
 
@@ -107,10 +119,11 @@ export default function CountryDetail() {
               sub="per night"
               accent
               change={change}
+              loading={loadingTrend}
             />
-            <StatCard label="30d Min" value={minPrice ? `$${minPrice.toFixed(0)}` : "—"} sub="lowest in period" />
-            <StatCard label="30d Max" value={maxPrice ? `$${maxPrice.toFixed(0)}` : "—"} sub="highest in period" />
-            <StatCard label="Listings" value={latest?.listings_count ?? "—"} sub="latest snapshot" />
+            <StatCard label="30d Min" value={minPrice ? `$${minPrice.toFixed(0)}` : "—"} sub="lowest in period" loading={loadingTrend} />
+            <StatCard label="30d Max" value={maxPrice ? `$${maxPrice.toFixed(0)}` : "—"} sub="highest in period" loading={loadingTrend} />
+            <StatCard label="Listings" value={latest?.listings_count ?? "—"} sub="latest snapshot" loading={loadingTrend} />
           </div>
 
           <div className="bg-surface border border-slate-700 rounded-2xl p-6">
@@ -118,8 +131,16 @@ export default function CountryDetail() {
             {loadingTrend ? (
               <div className="h-[280px] flex items-center justify-center text-slate-500">Loading chart...</div>
             ) : trend.length === 0 ? (
-              <div className="h-[280px] flex items-center justify-center text-slate-500">
-                No trend data available yet
+              <div className="h-[280px] flex flex-col items-center justify-center text-center gap-3 px-6">
+                <p className="text-slate-400 text-sm">
+                  {label} isn't in our live housing-price tracking yet — we're expanding country
+                  by country.
+                </p>
+                <p className="text-slate-500 text-xs">
+                  {token
+                    ? "Subscribe above and we'll notify you as soon as data lands."
+                    : "Sign in to get notified as soon as data lands for this country."}
+                </p>
               </div>
             ) : (
               <PriceChart data={trend} />

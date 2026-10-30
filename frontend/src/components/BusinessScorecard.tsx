@@ -19,14 +19,25 @@ function ScoreBar({ label, score }: { label: string; score: number | null }) {
 export default function BusinessScorecard({ profile }: { profile: BusinessClimateProfile | null }) {
   if (!profile) {
     return (
-      <div className="bg-surface border border-slate-700 rounded-2xl p-6 text-slate-500 text-sm">
-        No reviewed business-climate data for this location yet.
+      <div className="bg-surface border border-slate-700 rounded-2xl p-8 text-center flex flex-col items-center gap-2">
+        <p className="text-slate-400 text-sm">
+          No reviewed business-climate profile for this location yet.
+        </p>
+        <p className="text-slate-500 text-xs max-w-sm">
+          We generate these with AI and hold every one for human review before publishing, so
+          coverage grows gradually rather than all at once.
+        </p>
       </div>
     )
   }
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="bg-amber-900/20 border border-amber-700/50 text-amber-200 text-xs rounded-xl px-4 py-3">
+        This summary is AI-generated for general orientation only and is not legal, tax, or
+        immigration advice. Verify any figure with a licensed professional in this country before
+        acting on it.
+      </div>
       <div className="bg-surface border border-slate-700 rounded-2xl p-6 flex flex-col gap-4">
         <ScoreBar label="Foreign land ownership" score={profile.foreign_land_ownership_score} />
         <ScoreBar label="Business registration ease" score={profile.business_registration_score} />
