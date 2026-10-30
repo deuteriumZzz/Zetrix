@@ -1,9 +1,11 @@
 from rest_framework import viewsets, filters
 from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 
+from apps.core.mixins import LargePageNumberPagination
 from apps.geo.models import Country, Region
 from .models import PriceRecord, DailyAggregate
 from .serializers import PriceRecordSerializer, DailyAggregateSerializer, PriceTrendSerializer
@@ -13,6 +15,7 @@ from .services import PriceAnalysisService
 class PriceRecordViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PriceRecord.objects.select_related("source", "country", "region").all()
     serializer_class = PriceRecordSerializer
+    permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["country", "region", "market_type", "property_type", "source"]
     ordering_fields = ["scraped_at", "price_usd"]
@@ -54,6 +57,8 @@ class PriceRecordViewSet(viewsets.ReadOnlyModelViewSet):
 class DailyAggregateViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = DailyAggregate.objects.all()
     serializer_class = DailyAggregateSerializer
+    permission_classes = [AllowAny]
+    pagination_class = LargePageNumberPagination
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["country", "region", "market_type", "property_type", "date"]
     ordering_fields = ["date", "avg_price_usd"]

@@ -51,7 +51,12 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = str(update.effective_chat.id)
     username = update.effective_user.username or ""
     await ensure_profile(chat_id, username)
-    await update.message.reply_text(_WELCOME, parse_mode="HTML")
+    await update.message.reply_text(
+        _WELCOME
+        + f"\n\nYour Telegram Chat ID is <code>{chat_id}</code> — "
+        + "paste it into your profile on the Zetrix site to link notifications to your account.",
+        parse_mode="HTML",
+    )
 
 
 async def _start_picker_or_search(update: Update, context: ContextTypes.DEFAULT_TYPE, prefix: str) -> None:

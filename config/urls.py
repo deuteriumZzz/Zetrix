@@ -21,6 +21,7 @@ api_v1_patterns = [
     path("prices/", include("apps.prices.urls")),
     path("reports/", include("apps.reports.urls")),
     path("notifications/", include("apps.notifications.urls")),
+    path("billing/", include("apps.billing.urls")),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "docs/",
@@ -35,6 +36,9 @@ api_v1_patterns = [
 ]
 
 urlpatterns = [
+    path("api/v2/evidence/", include("apps.evidence.urls")),
+    path("api/v2/", include("apps.decisions.urls")),
+    path("api/v2/", include("apps.workspaces.urls")),
     path("admin/", admin.site.urls),
     path("api/v1/", include((api_v1_patterns, "api_v1"))),
     path(

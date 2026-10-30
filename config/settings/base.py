@@ -33,6 +33,9 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.core",
+    "apps.workspaces",
+    "apps.evidence",
+    "apps.decisions",
     "apps.geo",
     "apps.opportunity",
     "apps.sources",
@@ -40,6 +43,7 @@ LOCAL_APPS = [
     "apps.reports",
     "apps.notifications",
     "apps.users",
+    "apps.billing",
     "apps.bot",
 ]
 
@@ -124,6 +128,14 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "120/min",
+        "user": "300/min",
+    },
 }
 
 # JWT
@@ -141,6 +153,10 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
+# Celery's built-in default queue is named "celery", but celery_worker (docker-compose.yml)
+# only consumes default/reports/scraping — without this, plain .delay() calls route to an
+# unconsumed queue and silently never run.
+CELERY_TASK_DEFAULT_QUEUE = "default"
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
@@ -167,6 +183,23 @@ CELERY_BEAT_SCHEDULE = {
 # Telegram
 TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN", default="")
 TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID", default="")
+
+# Email (password reset). Defaults to printing to the console in dev — set
+# EMAIL_BACKEND/EMAIL_HOST* env vars to a real SMTP provider for production.
+EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = env("EMAIL_HOST", default="")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@zetrix.app")
+FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000")
+
+# Stripe (billing) — blank keys make CreateCheckoutSessionView/StripeWebhookView
+# no-op with a 501, so the app runs fine without a Stripe account configured.
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
+STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY", default="")
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET", default="")
 
 # Sentry
 SENTRY_DSN = env("SENTRY_DSN", default="")

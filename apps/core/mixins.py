@@ -1,6 +1,14 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+
+
+class LargePageNumberPagination(PageNumberPagination):
+    """Allows callers to opt into a bigger page via ?page_size=, capped at 500."""
+
+    page_size_query_param = "page_size"
+    max_page_size = 500
 
 
 class TriggerActionMixin:

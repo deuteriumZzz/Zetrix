@@ -32,3 +32,15 @@ class ReportViewSet(viewsets.ModelViewSet):
             )
         ReportService.send_to_telegram(str(report.pk))
         return Response({"detail": "Sending to Telegram."}, status=status.HTTP_202_ACCEPTED)
+
+    @action(detail=True, methods=["post"], url_path="retry")
+    def retry(self, request, pk=None):
+        report = self.get_object()
+        if report.status not in ("pending", "failed"):
+            return Response(
+                {"detail": "Only pending or failed reports can be retried."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        Report.objects.filter(pk=report.pk).update(status="pending", error_message="")
+        ReportService.generate_async(str(report.pk))
+        return Response({"detail": "Regeneration queued."}, status=status.HTTP_202_ACCEPTED)

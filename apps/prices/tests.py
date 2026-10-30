@@ -120,9 +120,9 @@ class TestPriceAnalysisServiceGetTrend:
 
 
 class TestPriceViews:
-    def test_records_list_requires_auth(self, api_client):
+    def test_records_list_is_public(self, api_client):
         resp = api_client.get(reverse("api_v1:price-record-list"))
-        assert resp.status_code == 401
+        assert resp.status_code == 200
 
     def test_trend_requires_country(self, auth_client):
         resp = auth_client.get(reverse("api_v1:price-record-trend"), {"days": "30"})
@@ -154,6 +154,6 @@ class TestPriceViews:
         assert resp.status_code == 200
         assert len(resp.data) == 1
 
-    def test_aggregates_list_requires_auth(self, api_client):
+    def test_aggregates_list_is_public(self, api_client):
         resp = api_client.get(reverse("api_v1:daily-aggregate-list"))
-        assert resp.status_code == 401
+        assert resp.status_code == 200

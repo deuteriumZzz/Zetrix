@@ -26,7 +26,8 @@ class CountrySerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Country
         geo_field = "boundary"
+        id_field = "id"
         fields = [
-            "iso2", "iso3", "name", "continent", "centroid_lat", "centroid_lng",
+            "id", "iso2", "iso3", "name", "continent", "centroid_lat", "centroid_lng",
             "currency_code", "flag_emoji", "is_housing_supported", "regions",
         ]
