@@ -1,0 +1,87 @@
+dialog {
+  background: #101b20;
+  color: #edf1ee;
+  border: 1px solid #3c5c50;
+  border-radius: 8px;
+  padding: 45px;
+  width: calc(100% - 32px);
+  max-width: 550px;
+  max-height: 90svh;
+  overflow-y: auto;
+}
+
+dialog::backdrop {
+  background: #03090cbb;
+  backdrop-filter: blur(9px);
+}
+
+.dialog-close {
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  font-size: 30px;
+  background: none;
+  color: #a5baae;
+  padding: 5px;
+}
+
+.dialog-description {
+  font-size: 12px;
+  color: #91a89b;
+  line-height: 1.7;
+  margin: 20px 0;
+}
+
+dialog h2 {
+  font-size: 37px;
+  margin-top: 20px;
+}
+
+#brief-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#brief-form label {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+#brief-form input,#brief-form textarea,#brief-form select {
+  background: #0a1418;
+  border: 1px solid #345044;
+  padding: 12px;
+  color: #e1eee6;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+#brief-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+#brief-form .button {
+  margin-top: 14px;
+}
+
+#brief-status {
+  color: var(--mint);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-ready .reveal:not(.in-view) {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+.motion-ready .reveal {
+  transition: opacity .75s ease,transform .75s cubic-bezier(.2,.65,.3,1);
+}

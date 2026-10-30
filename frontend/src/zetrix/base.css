@@ -1,0 +1,258 @@
+:root {
+  font-family: Arial,Helvetica,sans-serif;
+  color: #edf1ee;
+  background: #080e12;
+  font-synthesis: none;
+  --bg: #080e12;
+  --panel: #0e171c;
+  --mint: #a1eed2;
+  --muted: #8e9d9e;
+  --line: rgba(186,215,211,.16);
+  --gutter: clamp(24px,5vw,88px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  margin: 0;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+button,input,select,textarea {
+  font: inherit;
+}
+
+button,a,input,select,textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,a {
+  touch-action: manipulation;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  color: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+button {
+  border: 0;
+}
+
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 5px;
+}
+
+::selection {
+  background: var(--mint);
+  color: var(--bg);
+}
+
+h1,h2,h3,p {
+  margin: 0;
+}
+
+h1,h2 {
+  font-weight: 400;
+  letter-spacing: -.055em;
+}
+
+h3 {
+  font-weight: 400;
+  letter-spacing: -.025em;
+}
+
+em {
+  font-style: normal;
+  color: var(--mint);
+}
+
+.muted {
+  color: #738587;
+}
+
+.eyebrow,.mono,.panel-label,.step-number,.hero-bottom,.globe-caption,.globe-coordinate,.demo-badge,.scenario-horizon,.case-index,.principle-icon {
+  font-family: ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  line-height: 1.6;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 11px;
+  color: #aec3c1;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  flex-shrink: 0;
+  box-shadow: 0 0 14px #8de2cb66;
+}
+
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 20px;
+  background: var(--mint);
+  color: var(--bg);
+  padding: 15px;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+.site-header {
+  height: 92px;
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  border-bottom: 1px solid var(--line);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 35px;
+  font-weight: 600;
+  letter-spacing: -1.7px;
+}
+
+.wordmark svg {
+  width: 32px;
+  height: 36px;
+  color: var(--mint);
+}
+
+.brand-dot {
+  font-size: 11px;
+  align-self: flex-start;
+  margin-top: 4px;
+  margin-left: -5px;
+  font-weight: 400;
+}
+
+.site-header nav {
+  display: flex;
+  gap: 32px;
+  margin: auto;
+  font-size: 12px;
+  color: #b9c4c3;
+}
+
+.site-header nav a {
+  padding: 12px 0;
+  transition: color .2s;
+}
+
+.site-header nav a:hover {
+  color: var(--mint);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 34px;
+  min-height: 52px;
+  padding: 15px 23px;
+  border: 1px solid #677873;
+  border-radius: 3px;
+  font-size: 13px;
+  background: transparent;
+  transition: background .2s,color .2s,transform .2s;
+}
+
+.button:hover {
+  background: #19332e;
+  transform: translateY(-2px);
+}
+
+.button-primary {
+  background: var(--mint);
+  color: #0b2820;
+  border-color: var(--mint);
+}
+
+.button-primary:hover {
+  background: #c5ffe6;
+  color: #071910;
+}
+
+.button-small {
+  min-height: 39px;
+  padding: 10px 15px;
+  font-size: 11px;
+  gap: 27px;
+}
+
+.button span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 25px;
+  background: none;
+  padding: 10px 0;
+  font-size: 12px;
+  color: #b8c7c5;
+  border-bottom: 1px solid transparent;
+  transition: border-color .2s,color .2s;
+}
+
+.text-link:hover {
+  border-color: var(--mint);
+  color: var(--mint);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  padding: 10px;
+  width: 40px;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 1px;
+  background: #fff;
+  margin: 6px 0;
+  transition: transform .2s;
+}

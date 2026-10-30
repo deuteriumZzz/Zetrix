@@ -1,12 +1,119 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zetrix — Bali Market Analyzer</title>
-  </head>
-  <body class="bg-slate-900 text-white">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#080e12" />
+  <meta name="description" content="Zetrix — сценарный анализ геополитических рисков для бизнеса. Исследуйте связи между событиями, поставками и затратами в интерактивном прототипе." />
+  <title>Zetrix — Просчитайте следующий шаг</title>
+  <link rel="icon" type="image/svg+xml" href="/zetrix-mark.svg" />
+  <link rel="stylesheet" href="/src/zetrix/styles.css" />
+  <script type="module" src="/src/zetrix/main.ts"></script>
+</head>
+<body>
+  <div class="page-progress" aria-hidden="true"><span id="page-progress-fill"></span></div>
+  <button id="motion-toggle" class="motion-switch" aria-pressed="false" aria-label="Приостановить все декоративные анимации"><span class="motion-switch-icon" aria-hidden="true">Ⅱ</span><span class="motion-switch-label">Анимация: вкл.</span></button>
+  <nav class="chapter-dock" aria-label="Разделы страницы"><a href="#main" aria-label="Первый экран" aria-current="location">00</a><a href="#approach" aria-label="Подход Zetrix">01</a><a href="#workspace" aria-label="Сценарная лаборатория">02</a><a href="#use-cases" aria-label="Применение">03</a><a href="#pilot" aria-label="Пилотная программа">04</a></nav>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <header class="site-header">
+    <a class="wordmark" href="#" aria-label="Zetrix — главная"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M5 7h27L12 25h19v6H3l20-18H5Z" fill="currentColor"/><path d="M5 17h7l-7 6Z" fill="currentColor"/></svg>zetrix</a>
+    <nav id="navigation" aria-label="Главная навигация">
+      <a href="#approach">Подход</a><a href="#workspace">Демо-сценарий</a><a href="#use-cases">Применение</a>
+    </nav>
+    <button class="button button-small header-cta" data-open-brief>Обсудить пилот <span aria-hidden="true">↗</span></button>
+    <button class="menu-toggle" aria-controls="navigation" aria-expanded="false" aria-label="Открыть меню"><span></span><span></span></button>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-grid" aria-hidden="true"></div><div class="hero-aurora" aria-hidden="true"></div><div class="pointer-light" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span> GEOPOLITICAL SCENARIO INTELLIGENCE</p>
+        <h1 id="hero-title"><span class="hero-line"><span>Мир меняется.</span></span><span class="hero-line"><span>Просчитайте</span></span><span class="hero-line"><em>следующий шаг.</em></span></h1>
+        <p class="hero-description">От глобальных событий — к последствиям для вашего бизнеса. Исследуйте риски, проверяйте сценарии, понимайте зависимости.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#workspace">Исследовать сценарий <span aria-hidden="true">↗</span></a><a class="text-link" href="#approach">Узнать о подходе <span aria-hidden="true">↓</span></a></div>
+        <p class="prototype-note">Исследовательский прототип · открытая демонстрация</p>
+      </div>
+      <div class="globe-stage">
+        <canvas id="planet" role="img" aria-label="Вращающийся глобус из частиц. Декоративная карта связей между регионами."></canvas>
+        <div class="globe-caption globe-caption-top"><span class="crosshair">+</span> GLOBAL DEPENDENCY MAP <small>КОНЦЕПТ ВИЗУАЛИЗАЦИИ</small></div>
+        <div class="globe-coordinate" aria-hidden="true">35° 41′ N<br>139° 41′ E</div>
+        <div class="globe-caption globe-caption-bottom"><span class="status-dot"></span> СВЯЗИ ОПРЕДЕЛЯЮТ ПОСЛЕДСТВИЯ</div>
+        <button id="pause-globe" class="globe-control" aria-pressed="false" aria-label="Приостановить вращение глобуса">Ⅱ</button>
+      </div>
+      <div class="hero-bottom"><span>01 / SEE THE CONNECTIONS</span><a href="#approach">Дальше — глубже <span aria-hidden="true">↓</span></a><span>СОБЫТИЯ → ЗАВИСИМОСТИ → РЕШЕНИЯ</span></div>
+    </section>
+
+    <div class="signal-strip" aria-hidden="true"><div class="signal-track"><span>EVENT <i>↗</i> EXPOSURE <i>↗</i> SCENARIO <i>↗</i> DECISION <i>↗</i></span><span>EVENT <i>↗</i> EXPOSURE <i>↗</i> SCENARIO <i>↗</i> DECISION <i>↗</i></span><span>EVENT <i>↗</i> EXPOSURE <i>↗</i> SCENARIO <i>↗</i> DECISION <i>↗</i></span><span>EVENT <i>↗</i> EXPOSURE <i>↗</i> SCENARIO <i>↗</i> DECISION <i>↗</i></span></div></div>
+    <section id="approach" class="section approach">
+      <div class="section-top reveal"><p class="eyebrow">01 / ПОДХОД ZETRIX</p><span class="section-aside">Взаимосвязанный мир.<br>Понятная логика последствий.</span></div>
+      <div class="approach-heading reveal"><h2>У каждого события<br>есть <span class="muted">цепная реакция.</span></h2><p>Новое ограничение меняет маршрут. Маршрут меняет стоимость. Стоимость меняет ваше решение. Мы строим Zetrix, чтобы исследовать эту цепочку целиком.</p></div>
+      <div class="reaction-chain reveal" aria-label="Пример цепочки последствий">
+        <article><span class="step-number">01 — СОБЫТИЕ</span><div class="chain-icon" aria-hidden="true">↗</div><h3>Торговое ограничение</h3><p>Меняются условия ввоза в выбранный рынок.</p></article>
+        <article><span class="step-number">02 — ЗАВИСИМОСТЬ</span><div class="chain-icon" aria-hidden="true">⌁</div><h3>Связанные поставки</h3><p>Определяем, какая доля затрат подвержена изменению.</p></article>
+        <article><span class="step-number">03 — ПОСЛЕДСТВИЕ</span><div class="chain-icon" aria-hidden="true">↳</div><h3>Давление на бюджет</h3><p>Сравниваем исходные расходы с условиями сценария.</p></article>
+      </div>
+    </section>
+
+    <section id="workspace" class="section workspace">
+      <div class="section-top reveal"><p class="eyebrow">02 / SCENARIO WORKSPACE</p><span class="demo-badge"><span class="status-dot"></span> ИНТЕРАКТИВНОЕ ДЕМО</span></div>
+      <div class="workspace-heading reveal"><h2>А что, если?</h2><p>Измените условия. Посмотрите, как меняется результат.<br>Все числа ниже — иллюстративные вводные, не прогноз.</p></div>
+      <div class="scenario-shell reveal">
+        <div class="scenario-toolbar"><div><span class="workspace-mark" aria-hidden="true">Z /</span> Сценарная лаборатория</div><span class="mono">MODEL 001 · COST EXPOSURE</span></div>
+        <div class="scenario-tabs" style="--active-tab: 0" role="tablist" aria-label="Тип сценария">
+          <button role="tab" id="tab-trade" aria-selected="true" aria-controls="scenario-panel" data-scenario="trade">01 <span>Торговые ограничения</span></button>
+          <button role="tab" id="tab-supply" aria-selected="false" tabindex="-1" aria-controls="scenario-panel" data-scenario="supply">02 <span>Перебои поставок</span></button>
+          <button role="tab" id="tab-energy" aria-selected="false" tabindex="-1" aria-controls="scenario-panel" data-scenario="energy">03 <span>Энергетический шок</span></button>
+        </div>
+        <div id="scenario-panel" role="tabpanel" aria-labelledby="tab-trade" class="scenario-body">
+          <form id="scenario-form" class="scenario-inputs">
+            <p class="panel-label">ИСХОДНЫЕ УСЛОВИЯ <span>USD</span></p>
+            <label class="cost-label" for="monthly-cost" id="cost-label">Месячные затраты на импорт</label>
+            <div class="money-input"><span>$</span><input id="monthly-cost" name="monthlyCost" type="number" min="1" max="1000000000" step="1" value="1000000" required inputmode="numeric" aria-describedby="cost-help" /></div>
+            <p class="input-help" id="cost-help">От $1 до $1 млрд · условные данные вашей компании</p>
+            <label class="range-label" for="exposure">Доля затронутых затрат <output id="exposure-value" for="exposure">35%</output></label>
+            <input id="exposure" name="exposure" type="range" min="0" max="100" step="1" value="35" /><div class="range-ends"><span>0%</span><span>100%</span></div>
+            <label class="range-label" for="shock"><span id="shock-label">Удорожание затронутого импорта</span><output id="shock-value" for="shock">20%</output></label>
+            <input id="shock" name="shock" type="range" min="0" max="100" step="1" value="20" /><div class="range-ends"><span>0%</span><span>100%</span></div>
+            <label class="horizon-label" for="months">Горизонт сценария <select id="months" name="months"><option value="1">1 месяц</option><option value="3" selected>3 месяца</option><option value="6">6 месяцев</option><option value="12">12 месяцев</option></select></label>
+            <p class="input-error" id="input-error" role="status"></p>
+          </form>
+          <div class="scenario-results" aria-live="polite" aria-atomic="true">
+            <div class="result-heading"><p class="panel-label">ВОЗМОЖНЫЙ ЭФФЕКТ</p><span class="scenario-horizon" id="result-horizon">ЗА 3 МЕС.</span></div>
+            <p class="result-caption">Дополнительные затраты</p><div class="primary-result" id="additional-total">+$210 000</div>
+            <p class="result-explanation"><span id="increase-percent">+7%</span> к исходному бюджету при заданных условиях</p>
+            <div class="comparison-chart" role="img" id="comparison-chart" aria-label="Исходный бюджет 3 миллиона долларов, сценарий 3 миллиона 210 тысяч долларов">
+              <div class="bar-label"><span>Исходный бюджет</span><strong id="baseline-total">$3 000 000</strong></div><div class="bar-track"><div class="bar-base" id="baseline-bar"></div></div>
+              <div class="bar-label"><span>При сценарии</span><strong id="scenario-total">$3 210 000</strong></div><div class="bar-track"><div class="bar-scenario"><div id="extra-bar"></div></div></div>
+              <div class="chart-legend"><span><i></i> Базовые затраты</span><span><i></i> Эффект сценария</span></div>
+            </div>
+            <div class="scenario-observation"><span aria-hidden="true">↗</span><p id="scenario-description">Рост стоимости затронутого импорта увеличивает закупочный бюджет. Проверьте возможность замены поставщиков и пересмотра условий.</p></div>
+          </div>
+        </div>
+        <div class="scenario-bottom"><span id="save-status" role="status">Сценарий можно сохранить на этом устройстве</span><div><button id="reset-scenario" class="quiet-button">Сбросить</button><button id="save-scenario" class="quiet-button">Сохранить</button><button id="export-scenario" class="export-button">Скачать расчёт <span aria-hidden="true">↗</span></button></div></div>
+      </div>
+      <details class="model-notes reveal"><summary><span>Что стоит за расчётом</span><span class="details-symbol" aria-hidden="true">+</span></summary><div class="notes-grid"><div><h3>Открытая формула</h3><p>Дополнительные затраты = месячные затраты × доля затронутых затрат × удорожание × число месяцев.</p></div><div><h3>Границы модели</h3><p>Постоянные объёмы и условия на всём горизонте. Валютные колебания, реакция спроса, запасы и вторичные эффекты не учитываются. Вероятность события не оценивается.</p></div><div><h3>Откуда данные</h3><p>Параметры задаёт пользователь. Начальные значения — учебный пример. Внешние источники и AI-прогнозы к этому демо не подключены.</p></div></div></details>
+    </section>
+
+    <section id="use-cases" class="section use-cases">
+      <div class="section-top reveal"><p class="eyebrow">03 / ОТ АНАЛИЗА К ДЕЙСТВИЮ</p><span class="section-aside">Первый фокус — компании<br>с международными поставками</span></div>
+      <div class="use-cases-layout"><div class="use-cases-intro reveal"><h2>Увидеть риск.<br><span class="muted">Подготовить<br> решение.</span></h2><p>Начинаем с торговых ограничений и зависимости затрат от внешних условий. Следующие возможности будем развивать на задачах пилотных команд.</p><button class="text-link" data-open-brief>Предложить задачу для пилота <span aria-hidden="true">↗</span></button></div><div class="use-case-list">
+        <article class="reveal"><span class="case-index">01</span><div><p class="eyebrow">ЗАКУПКИ И ПОСТАВКИ</p><h3>Где сосредоточена зависимость?</h3><p>Сравнить влияние удорожания на разные доли закупок. Подготовить вопросы для обсуждения с поставщиками.</p></div><span class="case-arrow" aria-hidden="true">↗</span></article>
+        <article class="reveal"><span class="case-index">02</span><div><p class="eyebrow">ФИНАНСОВОЕ ПЛАНИРОВАНИЕ</p><h3>Какой запас бюджета нужен?</h3><p>Оценить дополнительные расходы при заданном шоке и выбрать горизонт планирования.</p></div><span class="case-arrow" aria-hidden="true">↗</span></article>
+        <article class="reveal"><span class="case-index">03</span><div><p class="eyebrow">СТРАТЕГИЯ КОМПАНИИ</p><h3>Какие условия меняют решение?</h3><p>Зафиксировать допущения и сохранить расчёт для обсуждения внутри команды.</p></div><span class="case-arrow" aria-hidden="true">↗</span></article>
+      </div></div>
+    </section>
+
+    <section class="principles section">
+      <div class="section-top reveal"><p class="eyebrow">04 / ПРИНЦИПЫ ПРОДУКТА</p></div>
+      <div class="principles-heading reveal"><h2>Сценарии, которые<br>можно <span class="muted">разобрать.</span></h2><p>Пользователь должен понимать, откуда взялся результат и что способно его изменить.</p></div>
+      <div class="principle-grid"><article class="reveal"><span class="principle-icon" aria-hidden="true">[01]</span><h3>Проверяемые вводные</h3><p>Для каждой модели — происхождение данных, дата и контекст. В демо все вводные доступны для изменения.</p></article><article class="reveal"><span class="principle-icon" aria-hidden="true">[02]</span><h3>Явные допущения</h3><p>Формула и ограничения рядом с результатом. Можно проверить, какие параметры влияют на вывод.</p></article><article class="reveal"><span class="principle-icon" aria-hidden="true">[03]</span><h3>Решение за человеком</h3><p>Сценарий помогает исследовать последствия. Его оценка требует контекста бизнеса и экспертной проверки.</p></article></div>
+    </section>
+
+    <section class="pilot-section section" id="pilot"><div class="pilot-orbit" aria-hidden="true"></div><div class="reveal"><p class="eyebrow"><span class="status-dot"></span> ZETRIX / PILOT PROGRAM</p><h2>Ваш следующий шаг<br>начинается с <em>«что, если?»</em></h2><p>Опишите задачу вашей команды.<br>Сформируйте бриф для обсуждения пилотного проекта.</p><button class="button button-primary" data-open-brief>Сформировать пилотный бриф <span aria-hidden="true">↗</span></button><span class="pilot-note">Бриф скачивается вам. Отправка заявки пока не подключена.</span></div></section>
+  </main>
+  <footer class="site-footer"><a class="wordmark" href="#" aria-label="Zetrix — наверх"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M5 7h27L12 25h19v6H3l20-18H5Z" fill="currentColor"/><path d="M5 17h7l-7 6Z" fill="currentColor"/></svg>zetrix</a><p>Глобальный контекст. Осознанные решения.</p><div><a href="#workspace">Открыть демо ↗</a><small>© 2026 Zetrix · Исследовательский прототип</small></div></footer>
+
+  <dialog id="brief-dialog" aria-labelledby="brief-title"><button class="dialog-close" aria-label="Закрыть окно">×</button><p class="eyebrow">ZETRIX / PILOT BRIEF</p><h2 id="brief-title">С какой задачей<br>вы работаете?</h2><p class="dialog-description">Соберите вводные для обсуждения пилота. Бриф сохранится в файл; данные никуда не отправляются.</p><form id="brief-form"><label for="brief-sector">Направление команды</label><select id="brief-sector" name="sector"><option>Импорт и закупки</option><option>Логистика</option><option>Финансовое планирование</option><option>Корпоративная стратегия</option><option>Другое</option></select><label for="brief-regions">Регионы или рынки</label><input id="brief-regions" name="regions" placeholder="Например, ЕС и Юго-Восточная Азия" maxlength="160" required /><label for="brief-question">Какое решение нужно принять?</label><textarea id="brief-question" name="question" placeholder="Опишите событие, зависимость и решение, которое хотите проверить…" rows="4" minlength="20" maxlength="2000" required></textarea><p class="input-help">Минимум 20 символов. Не указывайте конфиденциальные данные.</p><button type="submit" class="button button-primary">Скачать бриф <span aria-hidden="true">↓</span></button><p id="brief-status" role="status"></p></form></dialog>
+</body>
 </html>

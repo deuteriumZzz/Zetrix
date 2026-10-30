@@ -1,0 +1,96 @@
+.section {
+  padding: 96px var(--gutter);
+  scroll-margin-top: 10px;
+}
+
+.section-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 58px;
+}
+
+.section-aside {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+  text-align: right;
+}
+
+.section h2 {
+  font-size: clamp(36px,4.2vw,66px);
+  line-height: 1.13;
+}
+
+.approach {
+  background: #0c1418;
+  border-top: 1px solid var(--line);
+}
+
+.approach-heading {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 80px;
+  align-items: end;
+}
+
+.approach-heading>p,.workspace-heading>p,.principles-heading>p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--muted);
+  max-width: 360px;
+}
+
+.reaction-chain {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  margin-top: 60px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.reaction-chain article {
+  position: relative;
+  padding: 28px 36px 35px 0;
+}
+
+.reaction-chain article+article {
+  border-left: 1px solid var(--line);
+  padding-left: 36px;
+}
+
+.reaction-chain article:not(:last-child):after {
+  content: '→';
+  position: absolute;
+  right: -13px;
+  top: 73px;
+  width: 24px;
+  background: #0c1418;
+  color: var(--mint);
+  text-align: center;
+  z-index: 1;
+}
+
+.step-number {
+  color: #6e9290;
+  font-size: 9px;
+}
+
+.chain-icon {
+  color: var(--mint);
+  font-size: 37px;
+  line-height: 1;
+  margin: 30px 0 22px;
+}
+
+.reaction-chain h3 {
+  font-size: 20px;
+}
+
+.reaction-chain p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 12px;
+  max-width: 270px;
+}
