@@ -3,15 +3,28 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.mypy_cache/
 .coverage
 htmlcov/
 *.egg-info/
 .venv/
 venv/
+.venv-mvp/
 media/
 staticfiles/
 *.log
 .DS_Store
 claude/
 .claude/
+.serena/
+/var/
 
+# Frontend: dependencies and build output (deploy builds dist itself)
+node_modules/
+frontend/dist/
+
+# Third-party reference archive (copied site, videos, commercial fonts).
+# Not ours: do not commit or redistribute. Active code does not import it.
+frontend/public/anadyr/
+frontend/src/anadyr/
+frontend/scripts/localize-anadyr.py
