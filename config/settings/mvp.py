@@ -36,6 +36,13 @@ DATABASES = {'default': {
     'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
     'PORT': os.environ.get('DB_PORT', '5432'),
     'CONN_MAX_AGE': 60,
+    # Every org write queues on one row lock: fail fast instead of piling up behind a stuck
+    # transaction. For `migrate` on a large table run with DB_STATEMENT_TIMEOUT_MS=0.
+    # PgBouncer rejects startup `options`; set these as role defaults (ALTER ROLE ... SET) there.
+    'OPTIONS': {'options': (
+        f"-c lock_timeout={int(os.environ.get('DB_LOCK_TIMEOUT_MS', '5000'))} "
+        f"-c statement_timeout={int(os.environ.get('DB_STATEMENT_TIMEOUT_MS', '15000'))} "
+        f"-c idle_in_transaction_session_timeout={int(os.environ.get('DB_IDLE_IN_TX_TIMEOUT_MS', '30000'))}")},
 }}
 CACHES = {'default': {
     'BACKEND': 'django.core.cache.backends.redis.RedisCache',

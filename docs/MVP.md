@@ -419,8 +419,10 @@ M2 зависит от стабильного M1 API. M3 и M4 можно раз
   этот контекст и показывает прямой стоимостной эффект по каждой строке.
 - [x] Профиль `config.settings.mvp`: отдельные apps/URLConf, legacy API и расписания отсутствуют.
 - [x] Проверка отсутствия изменений миграции (`makemigrations --check`).
-- [x] PostgreSQL concurrency: 8 тестов гонок и 66 общих тестов проходят на PostgreSQL 16.2.
-- [ ] Release gate: таймауты PostgreSQL, Redis с несколькими workers, staging, отдельная БД и реальное развёртывание.
+- [x] PostgreSQL concurrency: 9 тестов гонок и 66 общих тестов проходят на PostgreSQL 16.2.
+- [x] Таймауты PostgreSQL в профиле `mvp`; ожидание блокировки или долгий запрос дольше лимита отвечает 503 `busy`.
+- [x] Job `backend-v2` в CI (миграции, SQLite, PostgreSQL); на GitHub ещё не запускался.
+- [ ] Release gate: Redis с несколькими workers, staging, отдельная БД, подбор таймаутов и реальное развёртывание.
 - По последней локальной проверке прошли 66 backend-тестов на SQLite и PostgreSQL и 76
   frontend-тестов; frontend build прошёл. Совместное покрытие четырёх backend
   модулей v2 — 98% с ветвлениями. Покрытие кабинета — 87% инструкций,

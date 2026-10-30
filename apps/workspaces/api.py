@@ -2,6 +2,7 @@
 import logging
 import uuid
 
+from django.db import OperationalError
 from django.http import Http404
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import APIException, ValidationError
@@ -17,6 +18,18 @@ class Conflict(APIException):
     status_code = 409
     default_detail = 'The request conflicts with the current resource.'
     default_code = 'conflict'
+
+
+class Busy(APIException):
+    """Database lock/statement timeout (see config.settings.mvp); the request is safe to retry."""
+    status_code = 503
+    default_detail = 'The service is busy. Retry the request.'
+    default_code = 'busy'
+    wait = 2  # Retry-After seconds
+
+
+# PostgreSQL SQLSTATE: lock_not_available (lock_timeout), query_canceled (statement_timeout).
+TIMEOUT_SQLSTATES = ('55P03', '57014')
 
 
 class WorkspaceAnonThrottle(AnonRateThrottle):
@@ -70,6 +83,9 @@ class WorkspaceAPIView(APIView):
         return super().initialize_request(request, *args, **kwargs)
 
     def handle_exception(self, exc):
+        if isinstance(exc, OperationalError) and getattr(exc.__cause__, 'pgcode', None) in TIMEOUT_SQLSTATES:
+            logger.warning('Database timeout (request_id=%s)', self.request_id)
+            exc = Busy()
         try:
             response = super().handle_exception(exc)
         except Exception:

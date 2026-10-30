@@ -25,7 +25,8 @@ jobs:
           timeout 90 bash -c 'until curl -sf http://localhost:8000/api/v1/geo/continents/ >/dev/null; do sleep 2; done'
 
       - name: Run backend test suite
-        run: docker compose exec -T web pytest -q
+        # Race tests have their own job (plain PostgreSQL, config.settings.workspace_pg_test).
+        run: docker compose exec -T web pytest -q --ignore=apps/workspaces/test_concurrency.py
 
       - name: Dump logs on failure
         if: failure()
@@ -34,6 +35,43 @@ jobs:
       - name: Tear down
         if: always()
         run: docker compose down -v
+
+  # Zetrix v2 on its own minimal requirements; the race tests need real PostgreSQL row locks.
+  backend-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: pg
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      ZETRIX_PG_HOST: 127.0.0.1
+      ZETRIX_PG_PASSWORD: pg
+      V2_APPS: apps.workspaces apps.scenario_engine apps.evidence apps.decisions
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: requirements/mvp.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements/mvp.txt
+
+      - name: Migrations are in sync with models
+        run: python -m django makemigrations workspaces evidence decisions --check --dry-run --settings=config.settings.workspace_test
+
+      - name: Tests on SQLite
+        run: python -m django test $V2_APPS --settings=config.settings.workspace_test
+
+      - name: Tests and race tests on PostgreSQL
+        run: python -m django test $V2_APPS --settings=config.settings.workspace_pg_test
 
   frontend:
     runs-on: ubuntu-latest
