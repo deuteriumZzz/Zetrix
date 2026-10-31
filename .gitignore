@@ -17,6 +17,7 @@ staticfiles/
 claude/
 .claude/
 .serena/
+.playwright-mcp/
 /var/
 
 # Frontend: dependencies and build output (deploy builds dist itself)
