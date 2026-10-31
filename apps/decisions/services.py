@@ -90,7 +90,7 @@ def render_csv(run):
         for impact in impacts:
             line = lines.get(impact['line_id'], {})
             row([impact['line_id'], line.get('supplier', ''), line.get('country_code', ''),
-                 line.get('category', ''), impact['affected'], run.inputs['currency'],
+                 line.get('category', ''), 'true' if impact['affected'] else 'false', run.inputs['currency'],
                  impact['baseline_total'], impact['additional_total'], impact['scenario_total']])
     return output.getvalue()
 

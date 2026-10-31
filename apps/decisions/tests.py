@@ -125,9 +125,13 @@ class CSVExportTests(WorkspaceFixture, TestCase):
              'evidence': {'title': 'Stored event', 'id': 'event-version'}}
         run.results = {**deepcopy(run.results), 'line_impacts': [
             {'line_id': 'line-1', 'affected': True, 'baseline_total': '300000.00',
-             'additional_total': '24000.00', 'scenario_total': '324000.00'}]}
+             'additional_total': '24000.00', 'scenario_total': '324000.00'},
+            {'line_id': 'line-2', 'affected': False, 'baseline_total': '100000.00',
+             'additional_total': '0.00', 'scenario_total': '100000.00'}]}
         rows = list(csv.reader(io.StringIO(render_csv(run))))
         joined = str(rows)
+        affected = [next(r for r in rows if r[:1] == [line])[4] for line in ('line-1', 'line-2')]
+        self.assertEqual(affected, ['true', 'false'])
         self.assertIn("'=HYPERLINK", joined)
         self.assertIn('324000.00', joined)
         self.assertIn('old-version', joined)
